@@ -41,11 +41,6 @@ public class DeviceController {
 		return null;
 	};
 
-	public static Route heartbeat = (Request request, Response response) -> {
-		response.status(200);
-		return null;
-	};
-
 	private static DeviceStatus buildStatus(Device device, Status status) {
 		DeviceStatus deviceStatus = new DeviceStatus();
 		deviceStatus.setDeviceId(device.getDeviceId());
