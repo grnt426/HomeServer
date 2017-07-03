@@ -1,0 +1,7 @@
+HomeServer.iml
+HomeServer.ipr
+HomeServer.iws
+gradle/
+build/
+.idea/
+.gradle/

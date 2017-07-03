@@ -1,5 +1,6 @@
 package app;
 
+import app.actions.ActionDao;
 import app.device.DeviceController;
 import app.device.DeviceDao;
 import app.heartbeat.HeartbeatController;
@@ -17,6 +18,7 @@ public class Application {
 	public static DeviceDao deviceDao = new DeviceDao();
 	public static HeartbeatDao heartbeatDao = new HeartbeatDao();
 	public static LightDao lightDao = new LightDao();
+	public static ActionDao actionDao = new ActionDao();
 
 	public static Sql2o sql2o;
 

@@ -18,6 +18,10 @@ public class MessageTransmitter {
 		ActionController.recordAction(payload, target);
 
 		RequestBody body = RequestBody.create(JSON, new Gson().toJson(payload));
+		Request request = new Request.Builder()
+				.url(buildAddress(target, "action"))
+				.post(body)
+				.build();
 
 		// TODO: Will later want to report failures better and implement retries.
 		Response response = null;
@@ -33,6 +37,6 @@ public class MessageTransmitter {
 	}
 
 	private static String buildAddress(Device target, String path) {
-		return target.getAddress() + ":9876/" + path;
+		return "http://" + target.getAddress() + ":9876/" + path;
 	}
 }

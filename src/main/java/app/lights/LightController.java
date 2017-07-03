@@ -18,6 +18,8 @@ public class LightController {
 	private static final Logger logger = LoggerFactory.getLogger(LightController.class);
 
 	public static Route turnOn = (Request request, Response response) -> {
+
+		// TODO: In the future, just expect the ID is passed in, rather than the name (saves a DB lookup).
 		logger.info("Turning on " + request.params(":name"));
 		Lights lights = lightDao.getLightGroup(request.params(":name"));
 		if(lights != null){
