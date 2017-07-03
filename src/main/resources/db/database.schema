@@ -1,0 +1,7 @@
+CREATE TABLE Device (deviceId INTEGER PRIMARY KEY, address TEXT, name TEXT);
+CREATE TABLE DeviceStatus (deviceId INTEGER, date TEXT, status TEXT,
+  FOREIGN KEY (deviceId) REFERENCES Device(deviceId));
+CREATE TABLE Lights (deviceId INTEGER PRIMARY KEY, name TEXT, state TEXT,
+  FOREIGN KEY (deviceId) REFERENCES Device(deviceId));
+CREATE TABLE HeartBeat (deviceId INTEGER, date TEXT,
+  FOREIGN KEY (deviceId) REFERENCES Device(deviceId));
