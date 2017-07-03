@@ -4,6 +4,8 @@ import app.device.DeviceController;
 import app.device.DeviceDao;
 import app.heartbeat.HeartbeatController;
 import app.heartbeat.HeartbeatDao;
+import app.lights.LightController;
+import app.lights.LightDao;
 import org.sql2o.Sql2o;
 
 import static app.util.JsonTransformer.json;
@@ -14,6 +16,7 @@ public class Application {
 
 	public static DeviceDao deviceDao = new DeviceDao();
 	public static HeartbeatDao heartbeatDao = new HeartbeatDao();
+	public static LightDao lightDao = new LightDao();
 
 	public static Sql2o sql2o;
 
@@ -29,6 +32,8 @@ public class Application {
 		get(Path.STATUS_ALL, DeviceController.statusAll, json());
 
 		get(Path.HEARTBEAT, HeartbeatController.heartbeat, json());
+
+		get(Path.LIGHTS_ON, LightController.turnOn, json());
 
 		after("api/*", (req, res) -> {
 			res.type("application/json");
