@@ -15,9 +15,7 @@ public class DeviceController {
 		return new ArrayList<Object>();
 	};
 
-	public static Route statusAll = (Request request, Response response) -> {
-		return null;
-	};
+	public static Route statusAll = (Request request, Response response) -> deviceDao.getStatusOfAllDevices();
 
 	/**
 	 * Receives the initial connection from the device.
