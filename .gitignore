@@ -3,5 +3,6 @@ HomeServer.ipr
 HomeServer.iws
 gradle/
 build/
-.idea/
+.idea
 .gradle/
+*.db

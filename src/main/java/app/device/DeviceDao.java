@@ -10,7 +10,7 @@ import java.util.List;
 
 public class DeviceDao {
 
-	private static String UPDATE_DEVICE = "UPDATE Device SET address = :address WHERE deviceId = :deviceId";
+	private static String UPDATE_DEVICE = "INSERT OR REPLACE INTO Device (deviceId, name) VALUES (:deviceId, COALESCE((SELECT name FROM Device WHERE deviceId = :deviceId), 'UNKNOWN'))";
 	private static String INSERT_STATUS = "INSERT INTO DeviceStatus(deviceId, date, status) VALUES (:deviceId, :date, :status)";
 	private static String SELECT_ALL_STATUS = "SELECT d1.* FROM DeviceStatus d1 LEFT JOIN DeviceStatus d2 ON (d1.deviceId = d2.deviceId AND d1.date < d2.date) WHERE d2.date IS NULL";
 	Logger logger = LoggerFactory.getLogger(DeviceDao.class);
@@ -19,7 +19,6 @@ public class DeviceDao {
 		try (Connection conn = Application.sql2o.open()) {
 			conn.createQuery(UPDATE_DEVICE)
 					.addParameter("deviceId", device.getDeviceId())
-					.addParameter("address", device.getAddress())
 					.executeUpdate();
 			return true;
 		}
