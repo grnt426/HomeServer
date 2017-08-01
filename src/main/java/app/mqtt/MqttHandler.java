@@ -17,6 +17,7 @@ public class MqttHandler implements MqttCallback {
 	private static String broker = "tcp://localhost:1883";
 	private static String clientId = "HomeServer";
 	private static MemoryPersistence persistence = new MemoryPersistence();
+	MqttClient mqttClient = new MqttClient(broker, clientId, persistence);
 
 	private static final Logger logger = LoggerFactory.getLogger(MqttHandler.class);
 
@@ -26,13 +27,20 @@ public class MqttHandler implements MqttCallback {
 		Server server = new Server();
 		server.startServer(new File(System.getProperty("user.dir") + MOQUETTE_CONF_DIR));
 
-		MqttClient mqttClient = new MqttClient(broker, clientId, persistence);
 		MqttConnectOptions connOpts = new MqttConnectOptions();
 		connOpts.setCleanSession(true);
 		mqttClient.setCallback(this);
 		mqttClient.connect(connOpts);
 
 		mqttClient.subscribe(DEVICE_ACTIVATE);
+	}
+
+	public void publishMessage(String topic, String message) {
+		try {
+			mqttClient.publish(topic, message.getBytes(), 0, false);
+		} catch (MqttException e) {
+			logger.error("Failed to send a message. [" + topic + "] " + message, e);
+		}
 	}
 
 	@Override

@@ -9,4 +9,6 @@ public class Path {
 	public static final String HEARTBEAT = "/api/heartbeat/:deviceId";
 
 	public static final String LIGHTS_ON = "/api/lights/on/:name";
+
+	public static final String AC_ON = "/api/ac/on";
 }
