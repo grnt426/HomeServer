@@ -10,11 +10,14 @@ import app.lights.LightController;
 import app.lights.LightDao;
 import app.mqtt.MqttHandler;
 import org.eclipse.paho.client.mqttv3.MqttException;
+import org.rythmengine.Rythm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sql2o.Sql2o;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import static app.util.JsonTransformer.json;
 import static spark.Spark.*;
@@ -43,6 +46,10 @@ public class Application {
 		// MQTT Broker and Client
 		mqttHandler = new MqttHandler();
 
+		Map<String, Object> map = new HashMap<>();
+		map.put("home.template", System.getProperty("user.dir") + "/resources/templates");
+		Rythm.init(map);
+
 		port(8443);
 
 		before("/*", (req, res) -> {
@@ -53,6 +60,8 @@ public class Application {
 			}
 			logger.info("All good on auth");
 		});
+
+		get("/", (req, res) -> Rythm.render("index.html", ", World!"));
 
 		get("/hello", (req, res) -> {
 			logger.info("Hi!");
