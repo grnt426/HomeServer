@@ -2,15 +2,19 @@ package app.device;
 
 import app.util.DateHandler;
 import app.util.Status;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import static app.Application.deviceDao;
-
+@Service
 public class DeviceController {
+
+	@Autowired
+	private DeviceDao deviceDao;
 
 	/**
 	 * Receives the initial connection from the device.
 	 */
-	public static boolean activate(String deviceId, String ip) {
+	public boolean activate(String deviceId, String ip) {
 		boolean success;
 		Device device = new Device();
 		device.setDeviceId(deviceId);
@@ -24,7 +28,7 @@ public class DeviceController {
 		return success;
 	}
 
-	private static DeviceStatus buildStatus(Device device, Status status) {
+	private DeviceStatus buildStatus(Device device, Status status) {
 		DeviceStatus deviceStatus = new DeviceStatus();
 		deviceStatus.setDeviceId(device.getDeviceId());
 		deviceStatus.setDate(DateHandler.getDateTimeNow());

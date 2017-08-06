@@ -25,5 +25,7 @@ dependencies {
     compile 'io.moquette:moquette-broker:0.10'
     compile 'org.rythmengine:rythm-engine:1.1.5'
     compile 'joda-time:joda-time:2.9.3' // For Rythm only
+    compile 'org.springframework:spring-core:4.3.10.RELEASE'
+    compile 'org.springframework:spring-context:4.3.10.RELEASE'
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }

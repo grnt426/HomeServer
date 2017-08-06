@@ -6,22 +6,27 @@ import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Base64;
 
+@Component
 public class MqttHandler implements MqttCallback {
 
-	private static final String MOQUETTE_CONF_DIR = "/src/main/resources/conf/moquette.conf";
-	private static String broker = "tcp://localhost:1883";
-	private static String clientId = "HomeServer";
-	private static MemoryPersistence persistence = new MemoryPersistence();
-	MqttClient mqttClient = new MqttClient(broker, clientId, persistence);
+	@Autowired
+	private DeviceMqttControllerFacade deviceMqttControllerFacade;
 
+	private static final String MOQUETTE_CONF_DIR = "/resources/conf/moquette.conf";
+	private static final String broker = "tcp://localhost:1883";
+	private static final String clientId = "HomeServer";
+	private static final MemoryPersistence persistence = new MemoryPersistence();
 	private static final Logger logger = LoggerFactory.getLogger(MqttHandler.class);
-
 	private static final String DEVICE_ACTIVATE = "activate";
+
+	private final MqttClient mqttClient = new MqttClient(broker, clientId, persistence);
 
 	public MqttHandler() throws MqttException, IOException {
 		Server server = new Server();
@@ -37,6 +42,7 @@ public class MqttHandler implements MqttCallback {
 
 	public void publishMessage(String topic, String message) {
 		try {
+			logger.info("Sending message...");
 			mqttClient.publish(topic, message.getBytes(), 0, false);
 		} catch (MqttException e) {
 			logger.error("Failed to send a message. [" + topic + "] " + message, e);
@@ -61,7 +67,7 @@ public class MqttHandler implements MqttCallback {
 
 		switch (topic) {
 			case DEVICE_ACTIVATE:
-				DeviceMqttControllerFacade.activate(payload);
+				deviceMqttControllerFacade.activate(payload);
 				break;
 		}
 	}

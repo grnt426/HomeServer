@@ -2,22 +2,25 @@ package app.lights;
 
 import app.actions.Action;
 import app.device.Device;
-import app.network.MessageTransmitter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import spark.Request;
 import spark.Response;
 import spark.Route;
 
 import java.util.List;
 
-import static app.Application.lightDao;
-
+@Service
 public class LightController {
+
+	@Autowired
+	private LightDao lightDao;
 
 	private static final Logger logger = LoggerFactory.getLogger(LightController.class);
 
-	public static Route turnOn = (Request request, Response response) -> {
+	public Route turnOn = (Request request, Response response) -> {
 
 		// TODO: In the future, just expect the ID is passed in, rather than the name (saves a DB lookup).
 		logger.info("Turning on " + request.params(":name"));
@@ -28,7 +31,6 @@ public class LightController {
 				Action a = new Action();
 				a.setName("percent");
 				a.setValue("100");
-				MessageTransmitter.sendMessage(d, a);
 			}
 			response.status(200);
 		}
@@ -40,7 +42,7 @@ public class LightController {
 		return "";
 	};
 
-	public static Route turnOff = (Request request, Response response) -> {
+	public Route turnOff = (Request request, Response response) -> {
 		return "";
 	};
 }

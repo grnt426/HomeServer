@@ -1,13 +1,16 @@
 package app.device;
 
-import app.Application;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 import org.sql2o.Connection;
+import org.sql2o.Sql2o;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Repository
 public class DeviceDao {
 
 	private static String UPDATE_DEVICE = "INSERT OR REPLACE INTO Device (deviceId, name) VALUES (:deviceId, COALESCE((SELECT name FROM Device WHERE deviceId = :deviceId), 'UNKNOWN'))";
@@ -15,29 +18,30 @@ public class DeviceDao {
 	private static String SELECT_ALL_STATUS = "SELECT d1.* FROM DeviceStatus d1 LEFT JOIN DeviceStatus d2 ON (d1.deviceId = d2.deviceId AND d1.date < d2.date) WHERE d2.date IS NULL";
 	Logger logger = LoggerFactory.getLogger(DeviceDao.class);
 
+	@Autowired
+	private Sql2o sql2o;
+
 	public boolean registerDevice(Device device) {
-		try (Connection conn = Application.sql2o.open()) {
+		try (Connection conn = sql2o.open()) {
 			conn.createQuery(UPDATE_DEVICE)
 					.addParameter("deviceId", device.getDeviceId())
 					.executeUpdate();
 			return true;
-		}
-		catch(Exception e){
+		} catch(Exception e){
 			logger.error("Error updating device address.", e);
 		}
 		return false;
 	}
 
 	public boolean updateStatus(DeviceStatus deviceStatus) {
-		try (Connection conn = Application.sql2o.open()) {
+		try (Connection conn = sql2o.open()) {
 			conn.createQuery(INSERT_STATUS)
 					.addParameter("deviceId", deviceStatus.getDeviceId())
 					.addParameter("date", deviceStatus.getDate())
 					.addParameter("status", deviceStatus.getStatus())
 					.executeUpdate();
 			return true;
-		}
-		catch(Exception e){
+		} catch(Exception e){
 			logger.error("Error inserting device status.", e);
 		}
 		return false;
@@ -45,11 +49,10 @@ public class DeviceDao {
 
 	public List<DeviceStatus> getStatusOfAllDevices(){
 		List<DeviceStatus> statuses = new ArrayList<>();
-		try (Connection conn = Application.sql2o.open()) {
+		try (Connection conn = sql2o.open()) {
 			statuses = conn.createQuery(SELECT_ALL_STATUS)
 					.executeAndFetch(DeviceStatus.class);
-		}
-		catch(Exception e){
+		} catch(Exception e){
 			logger.error("Error retrieving statuses.", e);
 		}
 		return statuses;
