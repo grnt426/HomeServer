@@ -5,6 +5,7 @@ import app.device.DeviceHttpControllerFacade;
 import app.heartbeat.HeartbeatController;
 import app.lights.LightController;
 import org.rythmengine.Rythm;
+import org.rythmengine.conf.RythmConfigurationKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +38,7 @@ class WebConfig {
 	private void setupRoutes() {
 
 		Map<String, Object> map = new HashMap<>();
-		map.put("home.template", System.getProperty("user.dir") + "/resources/templates");
+		map.put(RythmConfigurationKey.HOME_TEMPLATE.getKey(), System.getProperty("user.dir") + "/resources/templates");
 		Rythm.init(map);
 
 		port(8443);
@@ -51,7 +52,7 @@ class WebConfig {
 			logger.info("All good on auth");
 		});
 
-		get("/", (req, res) -> Rythm.render("index.html", ", World!"));
+		get("/", (req, res) -> Rythm.render("index.rythm", deviceHttpControllerFacade.getAllDeviceStatus()));
 
 		get("/hello", (req, res) -> {
 			logger.info("Hi!");

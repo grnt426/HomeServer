@@ -7,6 +7,7 @@ import spark.Response;
 import spark.Route;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class DeviceHttpControllerFacade {
@@ -34,4 +35,8 @@ public class DeviceHttpControllerFacade {
 
 		return null;
 	};
+
+	public List<DeviceStatus> getAllDeviceStatus() {
+		return deviceDao.getStatusOfAllDevices();
+	}
 }

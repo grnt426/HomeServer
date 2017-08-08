@@ -1,0 +1,18 @@
+@import app.device.DeviceStatus
+@args List<DeviceStatus> deviceStatuses
+
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Status Panel</title>
+</head>
+<body>
+<h2>Devices</h2>
+<div id="devices">
+    @for(DeviceStatus status : deviceStatuses) {
+    <p>@status.getDeviceId() - @status.getStatus() as of @status.getDate()</p>
+    }
+</div>
+
+</body>
+</html>
