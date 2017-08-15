@@ -1,5 +1,7 @@
 @import app.device.DeviceStatus
-@args List<DeviceStatus> deviceStatuses
+@import app.device.DeviceCapability
+@import app.device.Device
+@args List<DeviceStatus> deviceStatuses, Map<String, DeviceCapability> deviceCapabilities
 
 <html>
 <head lang="en">
@@ -11,6 +13,10 @@
 <div id="devices">
     @for(DeviceStatus status : deviceStatuses) {
     <p>@status.getDeviceId() - @status.getStatus() as of @status.getDate()</p>
+    @{
+    DeviceCapability deviceCap = deviceCapabilities.get(status.getDeviceId());
+    p(deviceCap);
+    }
     }
 </div>
 

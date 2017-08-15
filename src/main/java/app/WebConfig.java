@@ -52,7 +52,9 @@ class WebConfig {
 			logger.info("All good on auth");
 		});
 
-		get("/", (req, res) -> Rythm.render("index.rythm", deviceHttpControllerFacade.getAllDeviceStatus()));
+		get("/", (req, res) -> Rythm.render("index.rythm",
+				deviceHttpControllerFacade.getAllDeviceStatus(),
+				deviceHttpControllerFacade.getDeviceCapabilityAsMap()));
 
 		get("/hello", (req, res) -> {
 			logger.info("Hi!");
@@ -68,6 +70,7 @@ class WebConfig {
 		get(Path.LIGHTS_ON, lightController.turnOn, json());
 
 		get(Path.AC_ON, acController.turnOn, json());
+		post(Path.AC_ACTION, acController.action, json());
 
 		after("api/*", (req, res) -> {
 			res.type("application/json");

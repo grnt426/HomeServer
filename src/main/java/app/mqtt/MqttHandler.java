@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.io.IOException;
 import java.util.Base64;
+import java.util.List;
 
 @Component
 public class MqttHandler implements MqttCallback {
@@ -42,11 +43,15 @@ public class MqttHandler implements MqttCallback {
 
 	public void publishMessage(String topic, String message) {
 		try {
-			logger.info("Sending message...");
+			logger.info("[" + topic + "]: " + message);
 			mqttClient.publish(topic, message.getBytes(), 0, false);
 		} catch (MqttException e) {
 			logger.error("Failed to send a message. [" + topic + "] " + message, e);
 		}
+	}
+
+	public void publishCommandSequence(String topic, List<String> commands) {
+		commands.forEach(c -> publishMessage(topic, c));
 	}
 
 	@Override

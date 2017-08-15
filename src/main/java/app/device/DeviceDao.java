@@ -57,4 +57,18 @@ public class DeviceDao {
 		}
 		return statuses;
 	}
+
+	public List<DeviceCapability> getAllDeviceCapabilities() {
+		List<DeviceCapability> devices = new ArrayList<>();
+		try (Connection conn = sql2o.open()) {
+			devices = conn.createQuery(
+					"SELECT d.deviceId, d.name, c.capabilityId, c.name capabilityName, c.type capabilityType FROM Device d " +
+							"LEFT JOIN Capability c ON d.capabilityId = c.capabilityId"
+			)
+					.executeAndFetch(DeviceCapability.class);
+		} catch (Exception e) {
+			logger.error("Error retrieving statuses.", e);
+		}
+		return devices;
+	}
 }

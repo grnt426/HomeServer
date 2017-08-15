@@ -1,8 +1,14 @@
 CREATE TABLE Device (
-  deviceId TEXT PRIMARY KEY,
-  name     TEXT
+  deviceId     TEXT PRIMARY KEY,
+  name         TEXT,
+  capabilityId INTEGER,
+  FOREIGN KEY (capabilityId) REFERENCES Capability (capabilityId)
 );
-CREATE TABLE DeviceStatus (deviceId INTEGER, date TEXT, status TEXT,
+
+CREATE TABLE DeviceStatus (
+  deviceId TEXT,
+  date     TEXT,
+  status   TEXT,
   FOREIGN KEY (deviceId) REFERENCES Device(deviceId));
 
 CREATE TABLE Lights (groupId INTEGER PRIMARY KEY, name TEXT, state TEXT);
@@ -10,8 +16,28 @@ CREATE TABLE LightGroupings (groupId INTEGER, deviceId INTEGER,
   FOREIGN KEY (groupId) REFERENCES Lights(groupId),
   FOREIGN KEY (deviceId) REFERENCES Device(deviceId));
 
-CREATE TABLE HeartBeat (deviceId INTEGER, date TEXT,
+CREATE TABLE HeartBeat (
+  deviceId TEXT,
+  date     TEXT,
   FOREIGN KEY (deviceId) REFERENCES Device(deviceId));
 
-CREATE TABLE Actions (deviceId INTEGER, date TEXT, action TEXT, value TEXT,
+CREATE TABLE Actions (
+  deviceId TEXT,
+  date     TEXT,
+  action   TEXT,
+  value    TEXT,
   FOREIGN KEY (deviceId) REFERENCES Device(deviceId));
+
+CREATE TABLE Capability (
+  capabilityId INTEGER,
+  name         TEXT,
+  type         TEXT
+);
+
+CREATE TABLE DeviceAcState (
+  deviceId    TEXT,
+  powered     INTEGER,
+  temperature INTEGER,
+  fanSpeed    INTEGER,
+  mode        TEXT
+);

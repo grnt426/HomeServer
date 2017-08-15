@@ -8,6 +8,8 @@ import spark.Route;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class DeviceHttpControllerFacade {
@@ -38,5 +40,10 @@ public class DeviceHttpControllerFacade {
 
 	public List<DeviceStatus> getAllDeviceStatus() {
 		return deviceDao.getStatusOfAllDevices();
+	}
+
+	public Map<String, DeviceCapability> getDeviceCapabilityAsMap() {
+		return deviceDao.getAllDeviceCapabilities().stream().collect(Collectors.toMap(DeviceCapability::getDeviceId,
+				d -> d));
 	}
 }
