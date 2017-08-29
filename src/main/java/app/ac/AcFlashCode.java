@@ -23,7 +23,7 @@ public enum AcFlashCode {
 	}
 
 	public String getFlashCode() {
-		return Long.toHexString(val);
+		return "0x" + Long.toHexString(val);
 	}
 
 	public boolean isProntoCode() {

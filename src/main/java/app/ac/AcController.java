@@ -32,8 +32,7 @@ public class AcController {
 	};
 
 	public Route turnOn = (Request request, Response response) -> {
-//		Application.mqttHandler.publishMessage("ac/ac_alpha", AcFlashCode.ON_OFF);
-		mqttHandler.publishMessage("ac/ac_alpha", "1");
+		mqttHandler.publishMessage("ac/ac_alpha", AcFlashCode.ON_OFF.getFlashCode());
 		response.status(200);
 		return "";
 	};
@@ -79,12 +78,21 @@ public class AcController {
 
 		int fanSpeed = acState.getFanSpeed();
 		int oldFanSpeed = prevState.getFanSpeed();
+		int dist = 0;
 		if (!isUndefined(fanSpeed) && fanSpeed != oldFanSpeed) {
-			// TODO: something
+			if (fanSpeed < oldFanSpeed) {
+				dist = 4 - oldFanSpeed + fanSpeed;
+			} else {
+				dist = fanSpeed - oldFanSpeed;
+			}
+			while (dist > 0) {
+				commandSequence.add(AcFlashCode.FAN_DOWN);
+				dist--;
+			}
 		}
 
 		String mode = acState.getMode().toLowerCase();
-		String oldMode = acState.getMode();
+		String oldMode = prevState.getMode();
 		if (!isUndefined(mode) && !mode.equals(oldMode)) {
 			if (!AcState.MODE.containsKey(mode)) {
 				halt(400, "Mode is invalid.");
