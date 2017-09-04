@@ -30,6 +30,10 @@ public enum AcFlashCode {
 		return false;
 	}
 
+	public static AcFlashCode getModeFlashCode(int mode) {
+		return mode == 0 ? COOL : mode == 1 ? ENERGY_SAVE : FAN_ONLY;
+	}
+
 	public static AcFlashCode getFlashCode(String name) {
 		return Arrays.stream(AcFlashCode.values()).filter(e -> e.name().toLowerCase().equals(name)).findFirst().get();
 	}

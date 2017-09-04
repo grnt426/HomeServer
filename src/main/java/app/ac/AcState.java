@@ -11,7 +11,7 @@ public class AcState {
 	private int powered;
 	private int temperature;
 	private int fanSpeed;
-	private String mode;
+	private int mode;
 
 	/**
 	 * Indicates if a particular state is not known, not set, or not requested.
@@ -23,7 +23,7 @@ public class AcState {
 
 	public static final Map<String, Integer> FAN_SPEED = new HashMap<>();
 
-	public static final Map<String, String> MODE = new HashMap<>();
+	public static final Map<String, Integer> MODE = new HashMap<>();
 
 	static {
 		FAN_SPEED.put("h", 3);
@@ -39,15 +39,9 @@ public class AcState {
 		FAN_SPEED.put("a", 0);
 		FAN_SPEED.put("auto", 0);
 
-		MODE.put("energy save", "energy_save");
-		MODE.put("energy_save", "energy_save");
-		MODE.put("save", "energy_save");
-
-		MODE.put("fan", "fan_only");
-		MODE.put("fan only", "fan_only");
-		MODE.put("fan_only", "fan_only");
-
-		MODE.put("cool", "cool");
+		MODE.put("cool", 0);
+		MODE.put("energy save", 1);
+		MODE.put("fan", 2);
 	}
 
 	/**
@@ -58,7 +52,7 @@ public class AcState {
 		powered = UNDF;
 		temperature = UNDF;
 		fanSpeed = UNDF;
-		mode = "UNKNOWN";
+		mode = UNDF;
 	}
 
 	public static final AcState EMPTY_REQUEST = new AcState();

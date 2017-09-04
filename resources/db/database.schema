@@ -39,5 +39,5 @@ CREATE TABLE DeviceAcState (
   powered     INTEGER,
   temperature INTEGER,
   fanSpeed    INTEGER,
-  mode        TEXT
+  mode        INTEGER
 );

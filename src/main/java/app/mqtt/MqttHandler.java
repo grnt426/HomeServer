@@ -29,6 +29,7 @@ public class MqttHandler implements MqttCallback {
 	private static final MemoryPersistence persistence = new MemoryPersistence();
 	private static final Logger logger = LoggerFactory.getLogger(MqttHandler.class);
 	private static final String DEVICE_ACTIVATE = "activate";
+	private static final String DEVICE_RECONNECT = "reconnect";
 	private static final String DEVICE_SYNC = "ac/sync/+";
 
 	private final MqttClient mqttClient = new MqttClient(broker, clientId, persistence);
@@ -43,6 +44,7 @@ public class MqttHandler implements MqttCallback {
 		mqttClient.connect(connOpts);
 
 		mqttClient.subscribe(DEVICE_ACTIVATE);
+		mqttClient.subscribe(DEVICE_RECONNECT);
 		mqttClient.subscribe(DEVICE_SYNC);
 	}
 
@@ -81,9 +83,13 @@ public class MqttHandler implements MqttCallback {
 			case DEVICE_ACTIVATE:
 				deviceMqttControllerFacade.activate(payload);
 				break;
+			case DEVICE_RECONNECT:
+				deviceMqttControllerFacade.reconnect(payload);
+				break;
 			case "ac/sync":
 				logger.info("Sync message [" + topic + "] for: " + payload);
 				acMqttControllerFacade.syncDeviceState(lastFilter, payload);
+				break;
 			default:
 				logger.info("Unmapped topic [" + topic + "]: " + payload);
 				break;

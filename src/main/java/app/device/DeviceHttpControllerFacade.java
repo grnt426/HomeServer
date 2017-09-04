@@ -27,7 +27,7 @@ public class DeviceHttpControllerFacade {
 	public Route statusAll = (Request request, Response response) -> deviceDao.getStatusOfAllDevices();
 
 	public Route activate = (Request request, Response response) -> {
-		boolean success = deviceController.activate(request.params(":deviceId"), request.ip());
+		boolean success = deviceController.activate(new Device(request.params(":deviceId"), request.ip()));
 
 		if (success) {
 			response.status(200);

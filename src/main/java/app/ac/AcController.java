@@ -99,14 +99,10 @@ public class AcController {
 			}
 		}
 
-		String mode = acState.getMode().toLowerCase();
-		String oldMode = prevState.getMode();
-		if (!isUndefined(mode) && !mode.equals(oldMode)) {
-			if (!AcState.MODE.containsKey(mode)) {
-				halt(400, "Mode is invalid.");
-			} else {
-				commandSequence.add(AcFlashCode.getFlashCode(mode));
-			}
+		int mode = acState.getMode();
+		int oldMode = prevState.getMode();
+		if (!isUndefined(mode) && mode != oldMode) {
+			commandSequence.add(AcFlashCode.getModeFlashCode(mode));
 		}
 
 		mqttHandler.publishCommandSequence("ac/" + name,
@@ -118,25 +114,12 @@ public class AcController {
 		return "success";
 	};
 
-	private AcState jsonToAcState(String payload) {
-		AcState state = new AcState();
-		return state;
-	}
-
 	private boolean isUndefined(int val) {
 		return val == AcState.UNDF;
 	}
 
 	private boolean isUndefined(String val) {
 		return val.toLowerCase().equals(AcState.UNDF);
-	}
-
-	private String mapNameToDevice(String name) {
-		return "ac/ac_alpha";
-	}
-
-	private void sendSequence(AcFlashCode... codes) {
-
 	}
 
 	private AcState getRequest(String payload) {
