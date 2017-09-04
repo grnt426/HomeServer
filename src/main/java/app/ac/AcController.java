@@ -27,14 +27,22 @@ public class AcController {
 
 	private static final Logger logger = LoggerFactory.getLogger(AcController.class);
 
+	/**
+	 * TODO: Both on and off are the same; it should first check the state of the AC
+	 */
 	public Route turnOff = (Request request, Response response) -> {
-		return "";
+		mqttHandler.publishMessage("ac/ac_alpha", AcFlashCode.ON_OFF.getFlashCode());
+		response.status(200);
+		return "OK";
 	};
 
+	/**
+	 * TODO: Both on and off are the same; it should first check the state of the AC
+	 */
 	public Route turnOn = (Request request, Response response) -> {
 		mqttHandler.publishMessage("ac/ac_alpha", AcFlashCode.ON_OFF.getFlashCode());
 		response.status(200);
-		return "";
+		return "OK";
 	};
 
 	public Route action = (Request request, Response response) -> {

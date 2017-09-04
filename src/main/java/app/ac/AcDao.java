@@ -29,4 +29,16 @@ public class AcDao {
 		}
 		return state;
 	}
+
+	public void syncDeviceState(AcState state) {
+		try (Connection conn = sql2o.open()) {
+			conn.createQuery("INSERT OR REPLACE INTO DeviceAcState " +
+					"(deviceId, powered, temperature, fanSpeed, mode) " +
+					"VALUES (:deviceId, :powered, :temperature, :fanSpeed, :mode)")
+					.bind(state)
+					.executeUpdate();
+		} catch (Exception e) {
+			logger.error("Unable to sync device state with database!");
+		}
+	}
 }

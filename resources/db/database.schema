@@ -35,7 +35,7 @@ CREATE TABLE Capability (
 );
 
 CREATE TABLE DeviceAcState (
-  deviceId    TEXT,
+  deviceId    TEXT PRIMARY KEY,
   powered     INTEGER,
   temperature INTEGER,
   fanSpeed    INTEGER,

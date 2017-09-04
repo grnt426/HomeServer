@@ -1,5 +1,6 @@
 package app.mqtt;
 
+import app.ac.AcMqttControllerFacade;
 import app.device.DeviceMqttControllerFacade;
 import io.moquette.server.Server;
 import org.eclipse.paho.client.mqttv3.*;
@@ -11,7 +12,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Base64;
 import java.util.List;
 
 @Component
@@ -20,12 +20,16 @@ public class MqttHandler implements MqttCallback {
 	@Autowired
 	private DeviceMqttControllerFacade deviceMqttControllerFacade;
 
+	@Autowired
+	private AcMqttControllerFacade acMqttControllerFacade;
+
 	private static final String MOQUETTE_CONF_DIR = "/resources/conf/moquette.conf";
 	private static final String broker = "tcp://localhost:1883";
 	private static final String clientId = "HomeServer";
 	private static final MemoryPersistence persistence = new MemoryPersistence();
 	private static final Logger logger = LoggerFactory.getLogger(MqttHandler.class);
 	private static final String DEVICE_ACTIVATE = "activate";
+	private static final String DEVICE_SYNC = "ac/sync/+";
 
 	private final MqttClient mqttClient = new MqttClient(broker, clientId, persistence);
 
@@ -39,6 +43,7 @@ public class MqttHandler implements MqttCallback {
 		mqttClient.connect(connOpts);
 
 		mqttClient.subscribe(DEVICE_ACTIVATE);
+		mqttClient.subscribe(DEVICE_SYNC);
 	}
 
 	public void publishMessage(String topic, String message) {
@@ -56,23 +61,31 @@ public class MqttHandler implements MqttCallback {
 
 	@Override
 	public void connectionLost(Throwable cause) {
-
+		// TODO: This should happen unless the underlying MQTT broker died
+		logger.error("MQTT Broker may have died???", cause);
 	}
 
 	@Override
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
-		logger.debug("Message received [" + topic + "] : " + message.getPayload());
-		String payload = "";
-		byte[] imagePayload = null;
-		if (topic.contains("image")) {
-			imagePayload = Base64.getDecoder().decode(message.getPayload());
-		} else {
-			payload = new String(message.getPayload(), "UTF-8");
+		String payload = new String(message.getPayload(), "UTF-8");
+		logger.info("Message received [" + topic + "] : " + payload);
+		String subTopic = topic;
+		String lastFilter = topic;
+		if (topic.contains("/")) {
+			subTopic = topic.substring(0, topic.lastIndexOf("/"));
+			logger.info("Subtopic: " + subTopic);
+			lastFilter = topic.substring(topic.lastIndexOf("/") + 1);
 		}
 
-		switch (topic) {
+		switch (subTopic) {
 			case DEVICE_ACTIVATE:
 				deviceMqttControllerFacade.activate(payload);
+				break;
+			case "ac/sync":
+				logger.info("Sync message [" + topic + "] for: " + payload);
+				acMqttControllerFacade.syncDeviceState(lastFilter, payload);
+			default:
+				logger.info("Unmapped topic [" + topic + "]: " + payload);
 				break;
 		}
 	}
