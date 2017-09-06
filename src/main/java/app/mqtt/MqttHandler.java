@@ -34,12 +34,17 @@ public class MqttHandler implements MqttCallback {
 
 	private final MqttClient mqttClient = new MqttClient(broker, clientId, persistence);
 
+	private final MqttAsyncPublisher asyncPublisher;
+
 	public MqttHandler() throws MqttException, IOException {
 		Server server = new Server();
 		server.startServer(new File(System.getProperty("user.dir") + MOQUETTE_CONF_DIR));
 
 		MqttConnectOptions connOpts = new MqttConnectOptions();
 		connOpts.setCleanSession(true);
+		asyncPublisher = new MqttAsyncPublisher(this);
+		new Thread(asyncPublisher).start();
+
 		mqttClient.setCallback(this);
 		mqttClient.connect(connOpts);
 
@@ -99,5 +104,9 @@ public class MqttHandler implements MqttCallback {
 	@Override
 	public void deliveryComplete(IMqttDeliveryToken token) {
 
+	}
+
+	public void asyncPublishMessage(String topic, String message) {
+		asyncPublisher.addMessage(topic, message);
 	}
 }

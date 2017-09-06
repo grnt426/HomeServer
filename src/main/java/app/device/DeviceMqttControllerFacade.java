@@ -32,7 +32,7 @@ public class DeviceMqttControllerFacade {
 		if (deviceController.activate(device)) {
 			AcState state = acDao.getCurrentState(device.getDeviceId());
 			String json = JsonTransformer.toJson(state);
-			mqttHandler.publishMessage("ac/overwrite/" + device.getDeviceId(), json);
+			mqttHandler.asyncPublishMessage("ac/overwrite/" + device.getDeviceId(), json);
 			logger.info("Activation successful");
 		} else {
 			logger.error("Failed to activate.");
