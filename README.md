@@ -8,6 +8,13 @@ the devices.
 
 More info about this project to come.
 
+Requirements
+------------
+
+* Gradle 4.1
+
+If running from commandline, do `gradle build`
+
 Compatible Devices
 ------------------
 

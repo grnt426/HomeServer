@@ -27,6 +27,7 @@ public class MqttAsyncPublisher implements Runnable {
 	@Override
 	public void run() {
 
+		//noinspection InfiniteLoopStatement
 		while (true) {
 			if (queue.size() != 0) {
 				synchronized (queue) {

@@ -1,5 +1,6 @@
 apply plugin: 'java'
 apply plugin: 'idea'
+apply plugin: 'application'
 
 sourceCompatibility = 1.8
 version = '1.0'
@@ -29,3 +30,5 @@ dependencies {
     compile 'org.springframework:spring-context:4.3.10.RELEASE'
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }
+
+mainClassName = 'app.Application'
