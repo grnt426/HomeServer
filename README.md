@@ -13,7 +13,7 @@ Requirements
 
 * Gradle 4.1
 
-If running from commandline, do `gradle build`
+Then, do `gradle build` followed by `gradle run`
 
 Compatible Devices
 ------------------
