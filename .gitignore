@@ -6,3 +6,5 @@ build/
 .idea/
 .gradle/
 database.db
+*.p12
+*.db

@@ -19,6 +19,7 @@ class WebConfig {
 
 	private static final String AUTH_HEADER_NAME = System.getenv("authHeaderName");
 	private static final String AUTH_HEADER_VALUE = System.getenv("authHeaderValue");
+	private static final String KEYSTORE_PASSWORD = System.getenv("keystorePassword");
 	private static final Logger logger = LoggerFactory.getLogger(WebConfig.class);
 
 	private final AcController acController;
@@ -41,6 +42,7 @@ class WebConfig {
 		map.put(RythmConfigurationKey.HOME_TEMPLATE.getKey(), System.getProperty("user.dir") + "/resources/templates");
 		Rythm.init(map);
 
+		secure("/home/granite/HomeServer/letsencrypt.p12", KEYSTORE_PASSWORD, null, null);
 		port(8443);
 
 		before("/*", (req, res) -> {
