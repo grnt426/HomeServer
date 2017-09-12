@@ -54,20 +54,21 @@ class WebConfig {
 			// We need to setup a second server to redirect http to https
 			Service http = Service.ignite();
 			http.port(58080);
-			http.before((req, res) -> {
+			http.get("/*", (req, res) -> {
 				logger.info("Redirecting to https...");
 				res.redirect("https://" + req.host() + req.uri());
+				res.type("text/html");
+				return "";
 			});
 		}
 
 		service.port(8443);
 
 		service.before((req, res) -> {
-			logger.info("https://" + req.host() + req.uri());
 			Session session = req.session(true);
 
 			// We want to auth all pages *except* the login page
-			if (req.pathInfo().equals("/loginpage") || req.pathInfo().equals("/login")) {
+			if (req.pathInfo().equals("/home/loginpage") || req.pathInfo().equals("/home/login")) {
 				logger.info("Bypassing auth check as user is going to login page or logging in.");
 				return;
 			}
@@ -85,11 +86,11 @@ class WebConfig {
 				session.attribute("auth", true);
 			} else {
 				logger.error("No or bad auth");
-				res.redirect("/loginpage");
+				res.redirect("/home/loginpage");
 			}
 		});
 
-		service.post("/login", (request, response) -> {
+		service.post("/home/login", (request, response) -> {
 			String pass = request.queryParams("password");
 			if (pass != null && pass.equals(AUTH_HEADER_VALUE)) {
 				logger.info("Logged in, redirecting back home");
@@ -97,17 +98,23 @@ class WebConfig {
 			} else {
 				service.halt(404, "Bad credentials");
 			}
-			response.redirect("/");
+			response.redirect("/home");
 			return null;
 		});
 
-		service.get("/loginpage", (request, response) -> "<html><body>Password: <form action=\"/login\" method=\"POST\"><input type=\"text\" name=\"password\"/><input type=\"submit\" value=\"Login\"/></form></body></html>");
+		service.get("/home/loginpage", (request, response) -> "<html><body>Password: <form action=\"/home/login\" method=\"POST\"><input type=\"text\" name=\"password\"/><input type=\"submit\" value=\"Login\"/></form></body></html>");
 
-		service.get("/", (req, res) -> Rythm.render("index.rythm",
+		service.get("/", (req, res) -> {
+			res.redirect("/home");
+			return "";
+		});
+
+		service.get("/home", (req, res) -> Rythm.render("index.rythm",
 				deviceHttpControllerFacade.getAllDeviceStatus(),
-				deviceHttpControllerFacade.getDeviceCapabilityAsMap()));
+				deviceHttpControllerFacade.getDeviceCapabilityAsMap())
+		);
 
-		service.get("/hello", (req, res) -> {
+		service.get("/home/hello", (req, res) -> {
 			logger.info("Hi!");
 			return "Hello World";
 		});
@@ -123,7 +130,11 @@ class WebConfig {
 		service.get(Path.AC_ON, acController.turnOn, json());
 		service.post(Path.AC_ACTION, acController.action, json());
 
-		service.after("api/*", (req, res) -> {
+		service.after("/home/*", (req, res) -> {
+			res.type("text/html");
+		});
+
+		service.after("/api/*", (req, res) -> {
 			res.type("application/json");
 		});
 	}
