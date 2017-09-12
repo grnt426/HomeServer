@@ -8,13 +8,13 @@ import org.rythmengine.Rythm;
 import org.rythmengine.conf.RythmConfigurationKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import spark.Service;
 import spark.Session;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static app.util.JsonTransformer.json;
-import static spark.Spark.*;
 
 class WebConfig {
 
@@ -43,15 +43,27 @@ class WebConfig {
 		Map<String, Object> map = new HashMap<>();
 		map.put(RythmConfigurationKey.HOME_TEMPLATE.getKey(), System.getProperty("user.dir") + "/resources/templates");
 		Rythm.init(map);
+		Service service = Service.ignite();
 
 		if (KEYSTORE_LOCATION == null) {
 			logger.info("Starting up in devo. Serving only HTTP clients.");
 		} else {
-			secure(KEYSTORE_LOCATION, KEYSTORE_PASSWORD, null, null);
-		}
-		port(8443);
+			logger.info("Starting up in prod.");
+			service.secure(KEYSTORE_LOCATION, KEYSTORE_PASSWORD, null, null);
 
-		before((req, res) -> {
+			// We need to setup a second server to redirect http to https
+			Service http = Service.ignite();
+			http.port(58080);
+			http.before((req, res) -> {
+				logger.info("Redirecting to https...");
+				res.redirect("https://" + req.host() + req.uri());
+			});
+		}
+
+		service.port(8443);
+
+		service.before((req, res) -> {
+			logger.info("https://" + req.host() + req.uri());
 			Session session = req.session(true);
 
 			// We want to auth all pages *except* the login page
@@ -77,41 +89,41 @@ class WebConfig {
 			}
 		});
 
-		post("/login", (request, response) -> {
+		service.post("/login", (request, response) -> {
 			String pass = request.queryParams("password");
 			if (pass != null && pass.equals(AUTH_HEADER_VALUE)) {
 				logger.info("Logged in, redirecting back home");
 				request.session().attribute("auth", true);
 			} else {
-				halt(404, "Bad credentials");
+				service.halt(404, "Bad credentials");
 			}
 			response.redirect("/");
 			return null;
 		});
 
-		get("/loginpage", (request, response) -> "<html><body>Password: <form action=\"/login\" method=\"POST\"><input type=\"text\" name=\"password\"/><input type=\"submit\" value=\"Login\"/></form></body></html>");
+		service.get("/loginpage", (request, response) -> "<html><body>Password: <form action=\"/login\" method=\"POST\"><input type=\"text\" name=\"password\"/><input type=\"submit\" value=\"Login\"/></form></body></html>");
 
-		get("/", (req, res) -> Rythm.render("index.rythm",
+		service.get("/", (req, res) -> Rythm.render("index.rythm",
 				deviceHttpControllerFacade.getAllDeviceStatus(),
 				deviceHttpControllerFacade.getDeviceCapabilityAsMap()));
 
-		get("/hello", (req, res) -> {
+		service.get("/hello", (req, res) -> {
 			logger.info("Hi!");
 			return "Hello World";
 		});
 
-		get(Path.STATUS, deviceHttpControllerFacade.status, json());
-		get(Path.ACTIVATE, deviceHttpControllerFacade.activate, json());
-		get(Path.STATUS_ALL, deviceHttpControllerFacade.statusAll, json());
+		service.get(Path.STATUS, deviceHttpControllerFacade.status, json());
+		service.get(Path.ACTIVATE, deviceHttpControllerFacade.activate, json());
+		service.get(Path.STATUS_ALL, deviceHttpControllerFacade.statusAll, json());
 
-		get(Path.HEARTBEAT, heartbeatController.heartbeat, json());
+		service.get(Path.HEARTBEAT, heartbeatController.heartbeat, json());
 
-		get(Path.LIGHTS_ON, lightController.turnOn, json());
+		service.get(Path.LIGHTS_ON, lightController.turnOn, json());
 
-		get(Path.AC_ON, acController.turnOn, json());
-		post(Path.AC_ACTION, acController.action, json());
+		service.get(Path.AC_ON, acController.turnOn, json());
+		service.post(Path.AC_ACTION, acController.action, json());
 
-		after("api/*", (req, res) -> {
+		service.after("api/*", (req, res) -> {
 			res.type("application/json");
 		});
 	}
