@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class DeviceCapability extends Device {
-	private String capabilityId;
-	private String capabilityName;
-	private String capabilityType;
+	public int capabilityId;
+	public String capabilityName;
+	public String capabilityType;
 }

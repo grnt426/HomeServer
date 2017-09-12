@@ -24,7 +24,7 @@ dependencies {
     compile 'javax:javaee-api:7.0'
     compile 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.0.2'
     compile 'io.moquette:moquette-broker:0.10'
-    compile 'org.rythmengine:rythm-engine:1.1.5'
+    compile 'org.rythmengine:rythm-engine:1.2.0'
     compile 'joda-time:joda-time:2.9.3' // For Rythm only
     compile 'org.springframework:spring-core:4.3.10.RELEASE'
     compile 'org.springframework:spring-context:4.3.10.RELEASE'

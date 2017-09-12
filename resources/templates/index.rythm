@@ -12,10 +12,13 @@
 <h2>Devices</h2>
 <div id="devices">
     @for(DeviceStatus status : deviceStatuses) {
-    <p>@status.getDeviceId() - @status.getStatus() as of @status.getDate()</p>
-    @{
-    DeviceCapability deviceCap = deviceCapabilities.get(status.getDeviceId());
-    p(deviceCap);
+    <h3>@status.getDeviceId()</h3>
+    @status.getDeviceId();
+    <p>@status.getStatus() as of @status.getDate()</p>
+    @{DeviceCapability deviceCap = deviceCapabilities.get(status.getDeviceId());}
+    @(deviceCap ?: "Null")
+    @if(deviceCap != null) {
+    @(deviceCap.getCapabilityId() ?: "Null Id")
     }
     }
 </div>

@@ -8,6 +8,7 @@ import org.rythmengine.Rythm;
 import org.rythmengine.conf.RythmConfigurationKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import spark.Session;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -50,14 +51,45 @@ class WebConfig {
 		}
 		port(8443);
 
-		before("/*", (req, res) -> {
-			String authHeaderName = req.headers(AUTH_HEADER_NAME);
-			if (authHeaderName == null || !authHeaderName.equals(AUTH_HEADER_VALUE)) {
-				logger.error("No auth");
-				halt(401);
+		before((req, res) -> {
+			Session session = req.session(true);
+
+			// We want to auth all pages *except* the login page
+			if (req.pathInfo().equals("/loginpage") || req.pathInfo().equals("/login")) {
+				logger.info("Bypassing auth check as user is going to login page or logging in.");
+				return;
 			}
-			logger.info("All good on auth");
+
+			logger.info("Auth session val: " + session.attribute("auth"));
+			if (session.attribute("auth") != null && (Boolean) session.attribute("auth")) {
+				logger.info("Auth check successful");
+				return;
+			}
+
+			logger.info("No auth, checking headers for secondary login...");
+			String headerVal = req.headers(AUTH_HEADER_NAME);
+			if (headerVal != null && headerVal.equals(AUTH_HEADER_VALUE)) {
+				logger.info("Header authentication accepted");
+				session.attribute("auth", true);
+			} else {
+				logger.error("No or bad auth");
+				res.redirect("/loginpage");
+			}
 		});
+
+		post("/login", (request, response) -> {
+			String pass = request.queryParams("password");
+			if (pass != null && pass.equals(AUTH_HEADER_VALUE)) {
+				logger.info("Logged in, redirecting back home");
+				request.session().attribute("auth", true);
+			} else {
+				halt(404, "Bad credentials");
+			}
+			response.redirect("/");
+			return null;
+		});
+
+		get("/loginpage", (request, response) -> "<html><body>Password: <form action=\"/login\" method=\"POST\"><input type=\"text\" name=\"password\"/><input type=\"submit\" value=\"Login\"/></form></body></html>");
 
 		get("/", (req, res) -> Rythm.render("index.rythm",
 				deviceHttpControllerFacade.getAllDeviceStatus(),
