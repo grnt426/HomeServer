@@ -7,6 +7,9 @@ import org.springframework.stereotype.Repository;
 import org.sql2o.Connection;
 import org.sql2o.Sql2o;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Repository
 public class AcDao {
 
@@ -40,5 +43,16 @@ public class AcDao {
 		} catch (Exception e) {
 			logger.error("Unable to sync device state with database!");
 		}
+	}
+
+	public List<AcState> getAllAcStates() {
+		List<AcState> states = new ArrayList<>();
+		try (Connection conn = sql2o.open()) {
+			states = conn.createQuery("SELECT * FROM DeviceAcState")
+					.executeAndFetch(AcState.class);
+		} catch (Exception e) {
+			logger.error("Unable to retrieve AC states");
+		}
+		return states;
 	}
 }

@@ -1,7 +1,11 @@
 @import app.device.DeviceStatus
 @import app.device.DeviceCapability
 @import app.device.Device
-@args List<DeviceStatus> deviceStatuses, Map<String, DeviceCapability> deviceCapabilities
+@import app.ac.AcState
+@args List<DeviceStatus> deviceStatuses
+@args Map<String, DeviceCapability> deviceCapabilities
+@args Map<String, Device> devices
+@args Map<String, AcState> acStates
 
 <html>
 <head lang="en">
@@ -11,16 +15,40 @@
 <body>
 <h2>Devices</h2>
 <div id="devices">
-    @for(DeviceStatus status : deviceStatuses) {
-    <h3>@status.getDeviceId()</h3>
-    @status.getDeviceId();
-    <p>@status.getStatus() as of @status.getDate()</p>
-    @{DeviceCapability deviceCap = deviceCapabilities.get(status.getDeviceId());}
-    @(deviceCap ?: "Null")
-    @if(deviceCap != null) {
-    @(deviceCap.getCapabilityId() ?: "Null Id")
-    }
-    }
+    <table style="width:900px;border-spacing:10px;border:0px">
+        @{int col = 0;}
+        @for(DeviceStatus status : deviceStatuses) {
+        @if(col == 0) {
+        <tr>
+            } else if(col == 2) {
+        </tr>
+        @{col = 0;}
+        }
+        <td style="width:270px">
+            @{DeviceCapability deviceCap = deviceCapabilities.get(status.getDeviceId());}
+            @{Device device = devices.get(status.getDeviceId())}
+            @{String deviceName = "UNNAMED"}
+            @{String deviceType = "NT"}
+            @if(deviceCap != null){
+            @{deviceType = deviceCap.getCapabilityType();}
+            }
+            @if(device != null){
+            @{deviceName = device.getName();}
+            }
+            @{String name = deviceType + " " + deviceName;}
+
+            <h3>@name</h3>
+            <p>@status.getStatus() as of @status.getDate()</p>
+
+            @(deviceCap ?: "Null")
+            @if(deviceCap != null) {
+            @(deviceCap.getCapabilityId() ?: "Null Id")
+            }
+
+        </td>
+        @{col = col + 1;}
+        }
+    </table>
 </div>
 
 </body>

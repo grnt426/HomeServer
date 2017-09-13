@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static app.util.JsonTransformer.json;
+import static spark.Spark.halt;
 
 class WebConfig {
 
@@ -58,7 +59,7 @@ class WebConfig {
 				logger.info("Redirecting to https...");
 				res.redirect("https://" + req.host() + req.uri());
 				res.type("text/html");
-				return "";
+				return null;
 			});
 		}
 
@@ -87,6 +88,7 @@ class WebConfig {
 			} else {
 				logger.error("No or bad auth");
 				res.redirect("/home/loginpage");
+				halt();
 			}
 		});
 
@@ -106,12 +108,15 @@ class WebConfig {
 
 		service.get("/", (req, res) -> {
 			res.redirect("/home");
-			return "";
+			halt();
+			return null;
 		});
 
 		service.get("/home", (req, res) -> Rythm.render("index.rythm",
 				deviceHttpControllerFacade.getAllDeviceStatus(),
-				deviceHttpControllerFacade.getDeviceCapabilityAsMap())
+				deviceHttpControllerFacade.getDeviceCapabilityAsMap(),
+				deviceHttpControllerFacade.getAllDevices(),
+				acController.getAllAcStates())
 		);
 
 		service.get("/home/hello", (req, res) -> {
@@ -130,7 +135,7 @@ class WebConfig {
 		service.get(Path.AC_ON, acController.turnOn, json());
 		service.post(Path.AC_ACTION, acController.action, json());
 
-		service.after("/home/*", (req, res) -> {
+		service.after("/home", (req, res) -> {
 			res.type("text/html");
 		});
 

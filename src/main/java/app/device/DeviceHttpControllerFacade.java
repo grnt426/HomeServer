@@ -1,5 +1,6 @@
 package app.device;
 
+import app.ac.AcController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import spark.Request;
@@ -7,6 +8,7 @@ import spark.Response;
 import spark.Route;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -19,6 +21,9 @@ public class DeviceHttpControllerFacade {
 
 	@Autowired
 	private DeviceController deviceController;
+
+	@Autowired
+	private AcController acController;
 
 	public Route status = (Request request, Response response) -> {
 		return new ArrayList<Object>();
@@ -45,5 +50,13 @@ public class DeviceHttpControllerFacade {
 	public Map<String, DeviceCapability> getDeviceCapabilityAsMap() {
 		return deviceDao.getAllDeviceCapabilities().stream().collect(Collectors.toMap(DeviceCapability::getDeviceId,
 				d -> d));
+	}
+
+	public Map<String, Device> getAllDevices() {
+		Map<String, Device> devices = new HashMap<>();
+		for (Device d : deviceController.getAllDevices()) {
+			devices.put(d.getDeviceId(), d);
+		}
+		return devices;
 	}
 }

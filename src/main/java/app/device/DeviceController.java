@@ -6,6 +6,8 @@ import app.util.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class DeviceController {
 
@@ -46,5 +48,9 @@ public class DeviceController {
 		deviceStatus.setDate(DateHandler.getDateTimeNow());
 		deviceStatus.setStatus(status.name());
 		return deviceStatus;
+	}
+
+	public List<Device> getAllDevices() {
+		return deviceDao.getAllDevices();
 	}
 }

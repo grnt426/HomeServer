@@ -71,4 +71,15 @@ public class DeviceDao {
 		}
 		return devices;
 	}
+
+	public List<Device> getAllDevices() {
+		List<Device> devices = new ArrayList<>();
+		try (Connection conn = sql2o.open()) {
+			devices = conn.createQuery("SELECT * FROM Device")
+					.executeAndFetch(Device.class);
+		} catch (Exception e) {
+			logger.error("Error retrieving devices.", e);
+		}
+		return devices;
+	}
 }

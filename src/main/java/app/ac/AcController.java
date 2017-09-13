@@ -11,7 +11,9 @@ import spark.Response;
 import spark.Route;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static spark.Spark.halt;
@@ -113,6 +115,14 @@ public class AcController {
 		response.status(200);
 		return "success";
 	};
+
+	public Map<String, AcState> getAllAcStates() {
+		Map<String, AcState> acStates = new HashMap<>();
+		for (AcState ac : acDao.getAllAcStates()) {
+			acStates.put(ac.getDeviceId(), ac);
+		}
+		return acStates;
+	}
 
 	private boolean isUndefined(int val) {
 		return val == AcState.UNDF;

@@ -16,4 +16,6 @@ public class Device {
 
 	@NonNull
 	private String address;
+
+	private int capabilityId;
 }
