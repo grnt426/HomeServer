@@ -65,6 +65,8 @@ class WebConfig {
 
 		service.port(8443);
 
+		service.externalStaticFileLocation(System.getProperty("user.dir") + "/resources");
+
 		service.before((req, res) -> {
 			Session session = req.session(true);
 
