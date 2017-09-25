@@ -35,8 +35,8 @@ Unfortunately, Java complicates consuming SSL certs. After installing the Let's 
 will need to import that into a keystore.
 
     sudo openssl pkcs12 -export -in /etc/letsencrypt/live/kurtzbot.space/fullchain.pem \ 
-    -inkey /etc/letsencrypt/live/kurtzbot.space/privkey.pem -out letsencrypt.p12 -name homeserver \ 
-    -CAfile /etc/letsencrypt/live/kurtzbot.space/chain.pem -caname root
+    -inkey /etc/letsencrypt/live/domain.name/privkey.pem -out letsencrypt.p12 -name homeserver \ 
+    -CAfile /etc/letsencrypt/live/domain.name/chain.pem -caname root
 
 When prompted, provide a password to protect the keystore with. When the application starts up, it will read the
 keystore, extract the cert, and then start serving HTTPS clients.
