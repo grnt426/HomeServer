@@ -34,7 +34,7 @@ Setting Up the Keystore
 Unfortunately, Java complicates consuming SSL certs. After installing the Let's Encrypt certs, you
 will need to import that into a keystore.
 
-    sudo openssl pkcs12 -export -in /etc/letsencrypt/live/kurtzbot.space/fullchain.pem \ 
+    sudo openssl pkcs12 -export -in /etc/letsencrypt/live/domain.name/fullchain.pem \ 
     -inkey /etc/letsencrypt/live/domain.name/privkey.pem -out letsencrypt.p12 -name homeserver \ 
     -CAfile /etc/letsencrypt/live/domain.name/chain.pem -caname root
 
