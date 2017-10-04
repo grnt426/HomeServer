@@ -69,3 +69,4 @@ Compatible Devices
 ------------------
 
 [AC Controller](https://github.com/grnt426/HomeAcDevice) can control a window AC unit.
+[Ambient Sensor](https://github.com/grnt426/HomeAmbientSensor) used to gather temperature, humidity, and light levels.

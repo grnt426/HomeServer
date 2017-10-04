@@ -31,6 +31,7 @@ public class MqttHandler implements MqttCallback {
 	private static final String DEVICE_ACTIVATE = "activate";
 	private static final String DEVICE_RECONNECT = "reconnect";
 	private static final String DEVICE_SYNC = "ac/sync/+";
+	private static final String AMBIENT_SYNC = "ambient/sync/+";
 
 	private final MqttClient mqttClient = new MqttClient(broker, clientId, persistence);
 
@@ -51,6 +52,7 @@ public class MqttHandler implements MqttCallback {
 		mqttClient.subscribe(DEVICE_ACTIVATE);
 		mqttClient.subscribe(DEVICE_RECONNECT);
 		mqttClient.subscribe(DEVICE_SYNC);
+		mqttClient.subscribe(AMBIENT_SYNC);
 	}
 
 	public void publishMessage(String topic, String message) {
@@ -92,8 +94,11 @@ public class MqttHandler implements MqttCallback {
 				deviceMqttControllerFacade.reconnect(payload);
 				break;
 			case "ac/sync":
-				logger.info("Sync message [" + topic + "] for: " + payload);
+				logger.info("AC sync message [" + topic + "] for: " + payload);
 				acMqttControllerFacade.syncDeviceState(lastFilter, payload);
+				break;
+			case "ambient/sync":
+				logger.info("Ambient sync message [" + topic + "] for: " + payload);
 				break;
 			default:
 				logger.info("Unmapped topic [" + topic + "]: " + payload);
