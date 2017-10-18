@@ -98,11 +98,11 @@ public class MqttHandler implements MqttCallback {
 				deviceMqttControllerFacade.reconnect(payload);
 				break;
 			case "ac/sync":
-				logger.info("AC sync message [" + topic + "] for: " + payload);
+				logger.info("AC sync message [" + topic + "] for " + lastFilter + ": " + payload);
 				acMqttControllerFacade.syncDeviceState(lastFilter, payload);
 				break;
 			case "ambient/sync":
-				logger.info("Ambient sync message [" + topic + "] for: " + payload);
+				logger.info("Ambient sync message [" + topic + "] for " + lastFilter + ": " + payload);
 				ambientMqttControllerFacade.syncDeviceState(lastFilter, payload);
 				break;
 			default:
