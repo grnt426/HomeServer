@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class AmbientState {
-	private String deviceID;
+	private String deviceId;
 	private int temperature;
 	private int humidity;
 	private int lightLevel;

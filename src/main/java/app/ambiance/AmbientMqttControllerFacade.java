@@ -16,7 +16,7 @@ public class AmbientMqttControllerFacade {
 
 	public void syncDeviceState(String deviceId, String payload) {
 		AmbientState state = JsonTransformer.fromJson(payload, AmbientState.class);
-		state.setDeviceID(deviceId);
+		state.setDeviceId(deviceId);
 		state.setEventTime(ZonedDateTime.now().format(
 				DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZZZ", Locale.ENGLISH)));
 		ambientDao.syncDeviceState(state);

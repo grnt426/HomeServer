@@ -14,7 +14,7 @@ public class AmbientHttpControllerFacade {
 
 	public Map<String, AmbientState> getMostRecentAmbientStatesAsMap() {
 		return ambientDao.getMostRecentAmbientStates()
-				.stream().collect(Collectors.toMap(AmbientState::getDeviceID, a -> a));
+				.stream().collect(Collectors.toMap(AmbientState::getDeviceId, a -> a));
 	}
 
 	;
