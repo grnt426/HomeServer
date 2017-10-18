@@ -86,8 +86,9 @@ public class MqttHandler implements MqttCallback {
 		String lastFilter = topic;
 		if (topic.contains("/")) {
 			subTopic = topic.substring(0, topic.lastIndexOf("/"));
-			logger.info("Subtopic: " + subTopic);
+			logger.info("Upper topics: " + subTopic);
 			lastFilter = topic.substring(topic.lastIndexOf("/") + 1);
+			logger.info("Bottom topic: " + lastFilter);
 		}
 
 		switch (subTopic) {
