@@ -1,6 +1,7 @@
 package app;
 
 import app.ac.AcController;
+import app.ambiance.AmbientHttpControllerFacade;
 import app.device.DeviceHttpControllerFacade;
 import app.heartbeat.HeartbeatController;
 import app.lights.LightController;
@@ -29,13 +30,16 @@ class WebConfig {
 	private final DeviceHttpControllerFacade deviceHttpControllerFacade;
 	private final HeartbeatController heartbeatController;
 	private final LightController lightController;
+	private final AmbientHttpControllerFacade ambientHttpControllerFacade;
 
 	WebConfig(AcController acController, DeviceHttpControllerFacade deviceHttpControllerFacade,
-	          HeartbeatController heartbeatController, LightController lightController) {
+	          HeartbeatController heartbeatController, LightController lightController,
+	          AmbientHttpControllerFacade ambientHttpControllerFacade) {
 		this.acController = acController;
 		this.deviceHttpControllerFacade = deviceHttpControllerFacade;
 		this.heartbeatController = heartbeatController;
 		this.lightController = lightController;
+		this.ambientHttpControllerFacade = ambientHttpControllerFacade;
 		setupRoutes();
 	}
 
@@ -118,7 +122,8 @@ class WebConfig {
 				deviceHttpControllerFacade.getAllDeviceStatus(),
 				deviceHttpControllerFacade.getDeviceCapabilityAsMap(),
 				deviceHttpControllerFacade.getAllDevices(),
-				acController.getAllAcStates())
+				acController.getAllAcStates(),
+				ambientHttpControllerFacade.getMostRecentAmbientStatesAsMap())
 		);
 
 		service.get("/home/hello", (req, res) -> {

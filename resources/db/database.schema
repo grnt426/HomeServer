@@ -9,24 +9,28 @@ CREATE TABLE DeviceStatus (
   deviceId TEXT,
   date     TEXT,
   status   TEXT,
-  FOREIGN KEY (deviceId) REFERENCES Device(deviceId));
+  FOREIGN KEY (deviceId) REFERENCES Device (deviceId)
+);
 
 CREATE TABLE Lights (groupId INTEGER PRIMARY KEY, name TEXT, state TEXT);
 CREATE TABLE LightGroupings (groupId INTEGER, deviceId INTEGER,
   FOREIGN KEY (groupId) REFERENCES Lights(groupId),
-  FOREIGN KEY (deviceId) REFERENCES Device(deviceId));
+  FOREIGN KEY (deviceId) REFERENCES Device (deviceId)
+);
 
 CREATE TABLE HeartBeat (
   deviceId TEXT,
   date     TEXT,
-  FOREIGN KEY (deviceId) REFERENCES Device(deviceId));
+  FOREIGN KEY (deviceId) REFERENCES Device (deviceId)
+);
 
 CREATE TABLE Actions (
   deviceId TEXT,
   date     TEXT,
   action   TEXT,
   value    TEXT,
-  FOREIGN KEY (deviceId) REFERENCES Device(deviceId));
+  FOREIGN KEY (deviceId) REFERENCES Device (deviceId)
+);
 
 CREATE TABLE Capability (
   capabilityId INTEGER,
@@ -40,4 +44,13 @@ CREATE TABLE DeviceAcState (
   temperature INTEGER,
   fanSpeed    INTEGER,
   mode        INTEGER
+);
+
+CREATE TABLE AmbientStateHistory (
+  deviceId    TEXT,
+  temperature INTEGER,
+  humidity    INTEGER,
+  lightLevel  INTEGER,
+  eventTime   TEXT,
+  FOREIGN KEY (deviceId) REFERENCES Device (deviceId)
 );

@@ -4,10 +4,12 @@
 @import app.ac.AcState
 @import java.time.format.*
 @import java.time.*
+@import app.ambiance.*
 @args List<DeviceStatus> deviceStatuses
 @args Map<String, DeviceCapability> deviceCapabilities
 @args Map<String, Device> devices
 @args Map<String, AcState> acStates
+@args Map<String, AmbientState> ambientStates
 
 <html>
 <head lang="en">
@@ -38,6 +40,9 @@
             @if(deviceType.equals("AC")) {
             <img src="images/snowflake80x80.png" style="float:left"/>
             }
+            @if(deviceType.equals("AMB_SEN")) {
+            <img src="images/temp_light80x80.png" style="float:left"/>
+            }
             }
             <div>
             @if(device != null){
@@ -54,10 +59,35 @@
                 <h3>@deviceName</h3>
                 <p>@status.getStatus() as of @formattedDate</p>
 
-            @(deviceCap ?: "Null")
-            @if(deviceCap != null) {
-            @(deviceCap.getCapabilityId() ?: "Null Id")
-            }
+                @if(!deviceType.equals("NT")) {
+                <p>
+                    @if(deviceType.equals("AC")) {
+                    @{AcState state = acStates.get(device.getDeviceId());}
+                    @if(state.getPowered() == 1) {
+                    ON - @state.getTemperature()F,
+                    @if(state.getMode() == 1){
+                    energy save
+                    }
+                    on
+                    @if(state.getFanSpeed() == 0){
+                    auto
+                    }
+                    }
+                    else{
+                    OFF
+                    }
+                    }
+                    @if(deviceType.equals("AMB_SEN")) {
+                    @{AmbientState state = ambientStates.get(device.getDeviceId());}
+                    @if(state != null){
+                    @state.getTemperature()C @state.getHumidity()% and @state.getLightLevel()
+                    }
+                    else{
+                    No data
+                    }
+                    }
+                </p>
+                }
             </div>
         </td>
         @{col = col + 1;}

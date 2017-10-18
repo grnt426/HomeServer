@@ -16,7 +16,7 @@ public class AcDao {
 	@Autowired
 	private Sql2o sql2o;
 
-	Logger logger = LoggerFactory.getLogger(AcDao.class);
+	private final Logger logger = LoggerFactory.getLogger(AcDao.class);
 
 	public AcState getCurrentState(String deviceId) {
 		AcState state = AcState.EMPTY_REQUEST;
@@ -41,7 +41,7 @@ public class AcDao {
 					.bind(state)
 					.executeUpdate();
 		} catch (Exception e) {
-			logger.error("Unable to sync device state with database!");
+			logger.error("Unable to sync device state with database!", e);
 		}
 	}
 
@@ -51,7 +51,7 @@ public class AcDao {
 			states = conn.createQuery("SELECT * FROM DeviceAcState")
 					.executeAndFetch(AcState.class);
 		} catch (Exception e) {
-			logger.error("Unable to retrieve AC states");
+			logger.error("Unable to retrieve AC states", e);
 		}
 		return states;
 	}

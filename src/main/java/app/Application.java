@@ -1,6 +1,7 @@
 package app;
 
 import app.ac.AcController;
+import app.ambiance.AmbientHttpControllerFacade;
 import app.device.DeviceHttpControllerFacade;
 import app.heartbeat.HeartbeatController;
 import app.lights.LightController;
@@ -20,7 +21,8 @@ public class Application {
 	public static void main(String[] args) throws ClassNotFoundException, IOException, MqttException {
 		AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(Application.class);
 		new WebConfig(ctx.getBean(AcController.class), ctx.getBean(DeviceHttpControllerFacade.class),
-				ctx.getBean(HeartbeatController.class), ctx.getBean(LightController.class));
+				ctx.getBean(HeartbeatController.class), ctx.getBean(LightController.class),
+				ctx.getBean(AmbientHttpControllerFacade.class));
 		ctx.registerShutdownHook();
 	}
 

@@ -1,6 +1,7 @@
 package app.mqtt;
 
 import app.ac.AcMqttControllerFacade;
+import app.ambiance.AmbientMqttControllerFacade;
 import app.device.DeviceMqttControllerFacade;
 import io.moquette.server.Server;
 import org.eclipse.paho.client.mqttv3.*;
@@ -22,6 +23,9 @@ public class MqttHandler implements MqttCallback {
 
 	@Autowired
 	private AcMqttControllerFacade acMqttControllerFacade;
+
+	@Autowired
+	private AmbientMqttControllerFacade ambientMqttControllerFacade;
 
 	private static final String MOQUETTE_CONF_DIR = "/resources/conf/moquette.conf";
 	private static final String broker = "tcp://localhost:1883";
@@ -99,6 +103,7 @@ public class MqttHandler implements MqttCallback {
 				break;
 			case "ambient/sync":
 				logger.info("Ambient sync message [" + topic + "] for: " + payload);
+				ambientMqttControllerFacade.syncDeviceState(lastFilter, payload);
 				break;
 			default:
 				logger.info("Unmapped topic [" + topic + "]: " + payload);
