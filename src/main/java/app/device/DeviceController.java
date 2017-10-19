@@ -18,9 +18,9 @@ public class DeviceController {
 	private MqttHandler mqttHandler;
 
 	/**
-	 * Receives the initial connection from the device.
+	 * Registers the device for the first time, before it comes online.
 	 */
-	public boolean activate(Device device) {
+	public boolean register(Device device) {
 		boolean success;
 		if (success = deviceDao.registerDevice(device)) {
 			success = deviceDao.updateStatus(buildStatus(device, Status.REGISTERED));
@@ -30,6 +30,14 @@ public class DeviceController {
 
 		return success;
 	}
+
+	/**
+	 * When a device comes online for the first time, and expects to stay online.
+	 */
+	public boolean activate(Device device) {
+		return deviceDao.updateStatus(buildStatus(device, Status.ON));
+	}
+
 
 	public boolean reconnect(Device device) {
 		boolean success;
