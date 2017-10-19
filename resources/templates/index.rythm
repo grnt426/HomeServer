@@ -33,7 +33,7 @@
             @{Device device = devices.get(status.getDeviceId())}
             @{String deviceName = "UNNAMED"}
             @{String deviceType = "NT"}
-            @if(deviceCap != null && deviceCap.getCapabilityType()){
+            @if(deviceCap != null && deviceCap.getCapabilityType() != null){
             @{deviceType = deviceCap.getCapabilityType();}
             }
             @if(!deviceType.equals("NT")) {
