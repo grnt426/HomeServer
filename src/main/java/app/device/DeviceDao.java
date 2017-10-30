@@ -53,9 +53,9 @@ public class DeviceDao {
 		try (Connection conn = sql2o.open()) {
 			List<Device> devices = conn.createQuery("SELECT deviceId FROM Device").executeAndFetch(Device.class);
 			for (Device device : devices) {
-				statuses.add(conn.createQuery("SELECT * DeviceStatus WHERE deviceId = :deviceId ORDER BY date DESC LIMIT 1")
+				statuses.add(conn.createQuery("SELECT * FROM DeviceStatus WHERE deviceId = :deviceId ORDER BY date DESC LIMIT 1")
 						.addParameter("deviceId", device.getDeviceId())
-						.executeScalar(DeviceStatus.class));
+						.executeAndFetchFirst(DeviceStatus.class));
 			}
 		} catch(Exception e){
 			logger.error("Error retrieving statuses.", e);

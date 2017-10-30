@@ -28,7 +28,7 @@ public class AmbientDao {
 			for (Device sensor : sensors) {
 				states.add(conn.createQuery("SELECT * FROM AmbientStateHistory WHERE deviceId = :deviceId ORDER BY eventTime DESC LIMIT 1")
 						.addParameter("deviceId", sensor.getDeviceId())
-						.executeScalar(AmbientState.class));
+						.executeAndFetchFirst(AmbientState.class));
 			}
 		} catch (Exception e) {
 			logger.error("Error retrieving AmbientStateHistory", e);
