@@ -1,5 +1,6 @@
 package app.ambiance;
 
+import app.device.Device;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +22,14 @@ public class AmbientDao {
 	public List<AmbientState> getMostRecentAmbientStates() {
 		List<AmbientState> states = new ArrayList<>();
 		try (Connection conn = sql2o.open()) {
-			states = conn.createQuery("SELECT a1.* FROM AmbientStateHistory a1 " +
-					"LEFT JOIN AmbientStateHistory a2 ON (a1.deviceId = a2.deviceId AND a1.eventTime < a2.eventTime) " +
-					"WHERE a2.eventTime IS NULL")
-					.executeAndFetch(AmbientState.class);
+			List<Device> sensors = conn.createQuery("SELECT * FROM Device WHERE capabilityId = :capabilityId")
+					.addParameter("capabilityId", 222)
+					.executeAndFetch(Device.class);
+			for (Device sensor : sensors) {
+				states.add(conn.createQuery("SELECT * FROM AmbientStateHistory WHERE deviceId = :deviceId ORDER BY eventTime DESC LIMIT 1")
+						.addParameter("deviceId", sensor.getDeviceId())
+						.executeScalar(AmbientState.class));
+			}
 		} catch (Exception e) {
 			logger.error("Error retrieving AmbientStateHistory", e);
 		}

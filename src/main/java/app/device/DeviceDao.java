@@ -15,7 +15,6 @@ public class DeviceDao {
 
 	private static String INSERT_DEVICE = "INSERT INTO Device (deviceId, name) VALUES (:deviceId, :name, :capabilityId)";
 	private static String INSERT_STATUS = "INSERT INTO DeviceStatus(deviceId, date, status) VALUES (:deviceId, :date, :status)";
-	private static String SELECT_ALL_STATUS = "SELECT d1.* FROM DeviceStatus d1 LEFT JOIN DeviceStatus d2 ON (d1.deviceId = d2.deviceId AND d1.date < d2.date) WHERE d2.date IS NULL";
 	Logger logger = LoggerFactory.getLogger(DeviceDao.class);
 
 	@Autowired
@@ -52,8 +51,12 @@ public class DeviceDao {
 	public List<DeviceStatus> getStatusOfAllDevices(){
 		List<DeviceStatus> statuses = new ArrayList<>();
 		try (Connection conn = sql2o.open()) {
-			statuses = conn.createQuery(SELECT_ALL_STATUS)
-					.executeAndFetch(DeviceStatus.class);
+			List<Device> devices = conn.createQuery("SELECT deviceId FROM Device").executeAndFetch(Device.class);
+			for (Device device : devices) {
+				statuses.add(conn.createQuery("SELECT * DeviceStatus WHERE deviceId = :deviceId ORDER BY date DESC LIMIT 1")
+						.addParameter("deviceId", device.getDeviceId())
+						.executeScalar(DeviceStatus.class));
+			}
 		} catch(Exception e){
 			logger.error("Error retrieving statuses.", e);
 		}
