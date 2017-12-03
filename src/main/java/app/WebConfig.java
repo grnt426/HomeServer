@@ -59,6 +59,12 @@ class WebConfig {
 			// We need to setup a second server to redirect http to https
 			Service http = Service.ignite();
 			http.port(58080);
+
+			// This is used during SSL certificate renewal. Default configuration for caching of static files
+			// is to not cache, so this should properly return different files each rotation period.
+			http.externalStaticFileLocation(System.getProperty("user.dir") + "/.certdir");
+
+			// Everyone else should get redirected
 			http.get("/*", (req, res) -> {
 				logger.info("Redirecting to https...");
 				res.redirect("https://" + req.host() + req.uri());
