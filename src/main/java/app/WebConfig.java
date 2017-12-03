@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import spark.Service;
 import spark.Session;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -60,12 +62,18 @@ class WebConfig {
 			Service http = Service.ignite();
 			http.port(58080);
 
-			// This is used during SSL certificate renewal. Default configuration for caching of static files
-			// is to not cache, so this should properly return different files each rotation period.
-			http.externalStaticFileLocation(System.getProperty("user.dir") + "/.certdir");
+			// This is used during SSL certificate renewal ONLY.
+			http.get("/.certdir/*", (req, res) -> {
+				res.type("text/plain");
+				res.raw().getOutputStream().write(Files.readAllBytes(Paths.get(System.getProperty("user.dir") + req.uri())));
+				res.raw().getOutputStream().flush();
+				res.raw().getOutputStream().close();
+				return res.raw();
+			});
 
-			// Everyone else should get redirected
-			http.get("/*", (req, res) -> {
+			// If we aren't serving certificate data, then the user needs to be redirected to HTTPS. HTTP is only for
+			// cert renewal.
+			http.get("*", (req, res) -> {
 				logger.info("Redirecting to https...");
 				res.redirect("https://" + req.host() + req.uri());
 				res.type("text/html");
