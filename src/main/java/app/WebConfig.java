@@ -63,7 +63,7 @@ class WebConfig {
 			http.port(58080);
 
 			// This is used during SSL certificate renewal ONLY.
-			http.get("/.certdir/*", (req, res) -> {
+			http.get("/.well-known/*", (req, res) -> {
 				res.type("text/plain");
 				res.raw().getOutputStream().write(Files.readAllBytes(Paths.get(System.getProperty("user.dir") + req.uri())));
 				res.raw().getOutputStream().flush();
