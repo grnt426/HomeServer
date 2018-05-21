@@ -13,7 +13,7 @@ import java.util.List;
 @Repository
 public class DeviceDao {
 
-	private static String INSERT_DEVICE = "INSERT INTO Device (deviceId, name) VALUES (:deviceId, :name, :capabilityId)";
+	private static String INSERT_DEVICE = "INSERT INTO Device (deviceId, name, capabilityId) VALUES (:deviceId, :name, :capabilityId)";
 	private static String INSERT_STATUS = "INSERT INTO DeviceStatus(deviceId, date, status) VALUES (:deviceId, :date, :status)";
 	Logger logger = LoggerFactory.getLogger(DeviceDao.class);
 
